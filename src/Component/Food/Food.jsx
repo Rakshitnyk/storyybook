@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import "./food.css";
-
+import React, { useState, useEffect } from "react";
+import './Food.css';
 
 const products = [
   {
@@ -41,48 +40,37 @@ const products = [
   },
 ];
 
-const ProductCard = ({ product, showQuantityControls }) => {
-  const [quantity, setQuantity] = useState(1);
+const CountdownTimer = () => {
+  const [timeLeft, setTimeLeft] = useState(12 * 3600 + 10 * 60 + 9); // 12:10:09 in seconds
 
-  const handleIncrease = () => {
-    if (quantity < product.available) {
-      setQuantity(quantity + 1);
-    }
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+    const timer = setInterval(() => setTimeLeft(timeLeft - 1), 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft]);
+
+  const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return ;
   };
 
-  const handleDecrease = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    }
-  };
+  return <span className="countdown-timer">Ends in 12:10:09<span className="timer-red">{formatTime(timeLeft)}</span></span>;
+};
 
+const ProductCard = ({ product }) => {
   return (
     <div className="card">
-       <img src={product.image} alt={product.name} className="item-image" />
+      <img src={product.image} alt={product.name} className="item-image" />
       <div className="content">
         <p className="available">Available: {product.available}</p>
         <h3 className="name">{product.name}</h3>
         <div className="discount-container">
-        <p className="discount">{product.discount}%</p>
-        <p className="original-price">Rp {product.originalPrice.toLocaleString()}</p>
+          <p className="discount">{product.discount}%</p>
+          <p className="original-price">Rp {product.originalPrice.toLocaleString()}</p>
         </div>
         <p className="discounted-price">Rp {product.discountedPrice.toLocaleString()}</p>
-        {showQuantityControls && (
-          <div className="quantity-controls">
-            <button className="quantity-btn" onClick={handleDecrease}>
-              -
-            </button>
-            <input
-              type="text"
-              className="quantity-display"
-              value={quantity}
-              readOnly
-            />
-            <button className="quantity-btn" onClick={handleIncrease}>
-              +
-            </button>
-          </div>
-        )}
         <button className="order-button">Order</button>
       </div>
     </div>
@@ -90,26 +78,20 @@ const ProductCard = ({ product, showQuantityControls }) => {
 };
 
 const Food = () => {
-  try {
-    return (
-      <div className="container">
-        <h1 className="title">Kans Resto</h1>
+  return (
+    <div className="container">
+      <h1 className="title">Kans Resto</h1>
+      <div className="discount-header">
         <h2 className="subtitle">Special Discount Today</h2>
-        <div className="grid">
-          {products.map((product, index) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              showQuantityControls={index >= 1} // Only show for the last 3 items
-            />
-          ))}
-        </div>
+        <CountdownTimer />
       </div>
-    );
-  } catch (error) {
-    console.error(error);
-    return <div>Error loading component</div>;
-  }
+      <div className="grid">
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default Food;
