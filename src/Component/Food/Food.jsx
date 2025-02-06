@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import './Food.css';
+import "./food.css";
 
 const products = [
   {
@@ -71,6 +71,8 @@ const ProductCard = ({ product }) => {
           <p className="original-price">Rp {product.originalPrice.toLocaleString()}</p>
         </div>
         <p className="discounted-price">Rp {product.discountedPrice.toLocaleString()}</p>
+      </div>
+      <div className="card-footer">
         <button className="order-button">Order</button>
       </div>
     </div>
